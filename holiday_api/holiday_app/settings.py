@@ -85,8 +85,10 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'holiday_app.HolidayUser'
 
 REST_FRAMEWORK = {
+    # 'rest_framework.permissions.DjangoModelPermissions'
+    # 'rest_framework.permissions.AllowAny'
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAdminUser'
+        'rest_framework.permissions.IsAuthenticated'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',

@@ -21,8 +21,15 @@ class Recipient(models.Model):
     An object representing the gift recipient.
     """
 
+    TYPE = (
+        ('friend', 'friend'),
+        ('family', 'family')
+    )
+
     # the name of the recipient.
     name = models.CharField(max_length=256)
+
+    relation = models.CharField(max_length=16, choices=TYPE)
 
     # the person giving the gift (it's a many recipients to one user relationship)
     giver = models.ForeignKey('HolidayUser', related_name='recipients')
@@ -40,13 +47,7 @@ class Gift(models.Model):
         ('wrapped', 'wrapped')
     )
 
-    TYPE = (
-        ('friend', 'friend'),
-        ('family', 'family')
-    )
-
     status = models.CharField(max_length=16, choices=STATUS)
-    relation = models.CharField(max_length=16, choices=TYPE)
 
     item = models.CharField(max_length=256)
     notes = models.TextField(max_length=2048)

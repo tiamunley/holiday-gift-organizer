@@ -13,9 +13,8 @@ class GiftSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = apps.get_model('holiday_app.Gift')
-        fields = ('status', 'relation', 'item',
-                  'notes', 'cost', 'recipient',
-                  'id')
+        fields = ('status', 'item', 'notes', 'cost',
+                  'recipient', 'id')
 
 
 class RecipientSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,7 +30,8 @@ class RecipientSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = apps.get_model('holiday_app.Recipient')
-        fields = ('name', 'giver', 'id', 'gifts')
+        fields = ('name', 'giver', 'id', 'gifts',
+                  'relation')
 
 
 class HolidayUserSerializer(serializers.HyperlinkedModelSerializer):
