@@ -216,6 +216,15 @@
             }
         }
 
+        $scope.cancelGift = function(recipient_id) {
+            for (var i = 0; i < $scope.recipients.length; i++) {
+                if ($scope.recipients[i].id === recipient_id) {
+                    $scope.recipients[i].gifts.shift();
+                    break;
+                }
+            }
+        }
+
         $scope.addRecipient = function() {
             if ($scope.recipients.length > 0) {
                 if ($scope.recipients[0].id === undefined) {
@@ -228,6 +237,10 @@
                 name: '',
                 gifts: [],
             });
+        }
+
+        $scope.cancelRecipient = function() {
+            $scope.recipients.shift();
         }
 
     }]);

@@ -49,18 +49,26 @@
                     <div class="col-md-4" ng-show="recipient.id === undefined">
                         <form ng-submit="createRecipient()" class="form-inline">
                             <br />
-                            <input class="form-control"
-                                   type="text"
-                                   name="newname" id="newname"
-                                   required
-                                   placeholder="Recipient's Name"
-                                   ng-maxlength="config.recipient.name.max_length"
-                                   ng-model="recipient.name" />
-                            <select class="form-control"
-                                    required
-                                    ng-model="recipient.relation"
-                                    ng-options="relation for relation in config.recipient.relation.choices"></select>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <div class="form-group">
+                                <input class="form-control"
+                                       type="text"
+                                       name="newname" id="newname"
+                                       required
+                                       placeholder="Recipient's Name"
+                                       ng-maxlength="config.recipient.name.max_length"
+                                       ng-model="recipient.name" />
+                                <select class="form-control"
+                                        required
+                                        ng-model="recipient.relation"
+                                        ng-options="relation for relation in config.recipient.relation.choices"></select>
+                            </div>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button ng-show="recipient.id === undefined"
+                                        ng-click="cancelRecipient()"
+                                        type="button"
+                                        class="btn btn-default">
+                                    Cancel
+                                </button>
                         </form>
                     </div>
                 </div>
@@ -105,6 +113,7 @@
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-primary" ng-click="saveGift(gift, recipient)">Save</button>
+                                    <button ng-show="gift.id === undefined" type="button" class="btn btn-default" ng-click="cancelGift(recipient.id)">Cancel</button>
                                     <button ng-show="gift.id !== undefined" type="button" class="btn btn-danger" ng-click="deleteGift(gift.id, recipient)">Delete</button>
                                 </td>
                             </tr>
