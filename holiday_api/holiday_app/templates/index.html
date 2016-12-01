@@ -1,17 +1,143 @@
 {% load staticfiles %}
 
 <!doctype html>
-<html lang="en" ng-app="image_app" xmlns="http://www.w3.org/1999/html">
+<html lang="en" ng-app="holiday_app" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Main View</title>
+    <title>Holiday Gift Organizer</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+
 </head>
-<body>
-    It works!
+<body ng-controller="indexController as ctrl">
     {% verbatim %}
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <form ng-submit="tryLogin()" class="form-horizontal">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" ng-model="username" class="form-control" id="username" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" ng-model="password" class="form-control" id="password" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <br />
+        <br />
+
+        <button class="btn btn-primary" ng-click="addRecipient()">Add Recipient</button><br />
+
+        <br />
+        <br />
+
+        <!-- for each recipient -->
+        <div class="col-md-12" ng-repeat="recipient in recipients">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title" ng-show="recipient.id !== undefined" ng-bind="recipient.name"></h2>
+                    <div class="col-md-4" ng-show="recipient.id === undefined">
+                        <form ng-submit="createRecipient()" class="form-inline">
+                            <br />
+                            <input class="form-control"
+                                   type="text"
+                                   name="newname" id="newname"
+                                   required
+                                   placeholder="Recipient's Name"
+                                   ng-maxlength="config.recipient.name.max_length"
+                                   ng-model="recipient.name" />
+                            <select class="form-control"
+                                    required
+                                    ng-model="recipient.relation"
+                                    ng-options="relation for relation in config.recipient.relation.choices"></select>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <a href="#" ng-show="recipient.id !== undefined" ng-click="addGift(recipient.id)">Add Gift</a>
+                    <table class="table table-striped" ng-show="recipient.gifts.length > 0">
+                        <thead>
+                            <tr>
+                                <th>Item*</th>
+                                <th>Status*</th>
+                                <th>Cost</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <!-- for each gift for that recipient -->
+                        <tbody ng-repeat="gift in recipient.gifts">
+                            <tr>
+                                <td>
+                                    <input class="form-control"
+                                           type="text"
+                                           name="item" id="item"
+                                           ng-maxlength="config.gift.children.item.max_length"
+                                           ng-model="gift.item"
+                                           placeholder="item name" />
+                                </td>
+                                <td>
+                                    <select class="form-control"
+                                            ng-model="gift.status"
+                                            ng-options="status for status in config.gift.children.status.choices"></select>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">$</div>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="cost" id="cost"
+                                               placeholder="Amount"
+                                               ng-model="gift.cost" />
+                                        <div class="input-group-addon">.00</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" ng-click="saveGift(gift, recipient)">Save</button>
+                                    <button ng-show="gift.id !== undefined" type="button" class="btn btn-danger" ng-click="deleteGift(gift.id, recipient)">Delete</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <textarea class="form-control" rows="2" ng-model="gift.notes" placeholder="some notes"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+
     {% endverbatim %}
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+    <!-- angular-material requires animage, aria, messages -->
+
+    <script src="{% static 'bower_components/angular/angular.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-sanitize.js"></script>
+    <script src="{% static 'bower_components/angular-resource/angular-resource.min.js' %}"></script>
+
+    <script src="{% static 'js/app.js' %}"></script>
 </body>
 </html>

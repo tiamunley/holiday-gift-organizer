@@ -34,6 +34,9 @@ class Recipient(models.Model):
     # the person giving the gift (it's a many recipients to one user relationship)
     giver = models.ForeignKey('HolidayUser', related_name='recipients')
 
+    class Meta:
+        unique_together = ('name', 'relation', 'giver')
+
 
 class Gift(models.Model):
     """
@@ -50,7 +53,7 @@ class Gift(models.Model):
     status = models.CharField(max_length=16, choices=STATUS)
 
     item = models.CharField(max_length=256)
-    notes = models.TextField(max_length=2048)
+    notes = models.TextField(max_length=2048, default='')
 
     # https://github.com/django-money/django-money
     # it's broken in 1.10.1, I don't know if it's been updated.

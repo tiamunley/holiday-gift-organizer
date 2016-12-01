@@ -1,0 +1,18 @@
+{
+  "name": "Holiday Gift Organizer App",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.9",
+    "bootstrap": "^3.3.7",
+    "angular-resource": "^1.5.9"
+  }
+}
