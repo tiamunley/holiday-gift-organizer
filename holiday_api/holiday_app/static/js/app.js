@@ -98,6 +98,14 @@
 
                     var choices = [];
 
+                    angular.forEach($scope.config.recipient.relation.choices, function(option) {
+                        choices.push(option.value);
+                    });
+
+                    $scope.config.recipient.relation.choices = choices;
+
+                    choices = [];
+
                     // just to clean it up, i was doing status.value in the ng-options but then it wasn't initializign
                     // correctly from the simpler ng-model value.
                     angular.forEach($scope.config.gift.children.status.choices, function(option) {
