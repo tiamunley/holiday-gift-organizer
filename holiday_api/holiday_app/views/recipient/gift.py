@@ -66,6 +66,9 @@ class GiftViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
+        import sys
+        from json import dumps
+        sys.stderr.write('errors: %s\n' % dumps(serializer.errors))
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, pk=None, **kwargs):
