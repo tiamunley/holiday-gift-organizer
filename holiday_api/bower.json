@@ -1,5 +1,5 @@
 {
-  "name": "Holiday Gift Organizer App",
+  "name": "holiday gift organizer app",
   "main": "",
   "license": "MIT",
   "private": true,
@@ -13,6 +13,8 @@
   "dependencies": {
     "angular": "^1.5.9",
     "bootstrap": "^3.3.7",
-    "angular-resource": "^1.5.9"
+    "angular-resource": "^1.5.9",
+    "angular-bootstrap": "^2.3.0",
+    "angular-animate": "^1.5.9"
   }
 }

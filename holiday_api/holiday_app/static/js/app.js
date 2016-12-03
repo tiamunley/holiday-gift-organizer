@@ -10,6 +10,7 @@
     var HolidayApp = angular.module('holiday_app', [
         'ngSanitize',
         'ngResource',
+        'ui.bootstrap',
     ]);
 
     HolidayApp.factory('Users', ['$resource', '$rootScope', function ($resource, $rootScope) {
@@ -45,47 +46,107 @@
 
     /* App.run, lets you initialize global stuff. */
     HolidayApp.run(function($rootScope, $http) {
-
-        $rootScope.loggedin = false;
         $rootScope.restUrl = '/api/v1/';
+        $rootScope.loggedin = false;
+    });
 
-        $rootScope.setToken = function(token) {
-            if (token) {
-                $rootScope.token = token;
-                localStorage.setItem('token', token);
-                $http.defaults.headers.common['Authorization'] = "Token " + token;
-            }
+    HolidayApp.controller('loginController', function($uibModalInstance, $scope, $http, credentials) {
+
+        /* should use routes or states for this, it'd be cleaner. */
+        $scope.tryLogin = function() {
+            var u = $scope.username;
+            var p = $scope.password;
+
+            $http({
+                url: '/auth/login/',
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + b64EncodeUnicode(u + ':' + p)
+                }
+            }).then(function success(response) {
+                console.log('Logged in!', new Date());
+                console.log('response: ' + JSON.stringify(response));
+
+                credentials.setUser(response.data.user);
+                credentials.setToken(response.data.token);
+                credentials.loggedIn = true;
+
+                $uibModalInstance.close('ok');
+            });
         };
 
-        $rootScope.clearAuth = function() {
-            delete $rootScope.token;
-            localStorage.removeItem('token');
-            delete $http.defaults.headers.common['Authorization'];
-
-            delete $rootScope.user;
-            localStorage.removeItem('user');
+        $scope.cancel = function() {
+            $uibModalInstance.dismiss('cancel');
         }
-
-        $rootScope.setUser = function(user) {
-            if (user) {
-                $rootScope.user = user;
-                localStorage.setItem('user', JSON.stringify(user));
-            }
-        }
-
-        $rootScope.setToken(localStorage.getItem('token'));
-        $rootScope.setUser(JSON.parse(localStorage.getItem('user')));
     });
 
     HolidayApp.controller('indexController',
                           ['$rootScope', '$scope', '$http',
                            '$location', '$window', '$q',
+                           '$uibModal',
                            'Recipients', 'Gifts', 'Users',
                            function($rootScope, $scope, $http,
                                     $location, $window, $q,
+                                    $uibModal,
                                     Recipients, Gifts, Users) {
 
-        $scope.config = {recipient: {}, gift: {}};
+        $scope.config = {
+            recipient: {},
+            gift: {},
+        };
+
+        $scope.credentials = {
+            loggedIn: false,
+
+            /* XXX: rewrite as a service. */
+            setToken: function(token) {
+                if (token) {
+                    $rootScope.token = token;
+                    localStorage.setItem('token', token);
+                    $http.defaults.headers.common['Authorization'] = "Token " + token;
+                }
+            },
+            clearAuth: function() {
+                delete $rootScope.token;
+                localStorage.removeItem('token');
+                delete $http.defaults.headers.common['Authorization'];
+
+                delete $rootScope.user;
+                localStorage.removeItem('user');
+            },
+
+            setUser: function(user) {
+                if (user) {
+                    $rootScope.user = user;
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+            },
+        };
+
+        $scope.credentials.setToken(localStorage.getItem('token'));
+        $scope.credentials.setUser(JSON.parse(localStorage.getItem('user')));
+
+        $scope.launchLoginModal = function() {
+            var modal = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title-top',
+                ariaDescribedBy: 'modal-body-top',
+                templateUrl: 'login.html',
+                size: 'md',
+                controller: 'loginController',
+                resolve: {
+                    credentials: function() {
+                        return $scope.credentials
+                    }
+                }
+            });
+
+            modal.result.then(function success(result) {
+                initializer();
+            }, function dismissed(result) {
+                console.log('modal dismissed.');
+            });
+        }
 
         var initializer = function() {
             /* ugly code here... should be elsewhere! */
@@ -116,31 +177,20 @@
                 });
         }
 
-        /* hmm. */
-        initializer();
-
-        /* should use routes or states for this, it'd be cleaner. */
-        $scope.tryLogin = function() {
-            var u = $scope.username;
-            var p = $scope.password;
+        function checkLogin() {
+            console.log('checking login');
 
             $http({
                 url: '/auth/login/',
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + b64EncodeUnicode(u + ':' + p)
-                }
+                method: 'POST'
             }).then(function success(response) {
-                console.log('Logged in!', new Date());
-                console.log('response: ' + JSON.stringify(response));
-
-                $rootScope.loggedin = true;
-                $rootScope.setUser(response.data.user);
-                $rootScope.setToken(response.data.token);
-
                 initializer();
+            }, function error(response) {
+                $scope.launchLoginModal();
             });
-        };
+        }
+
+        checkLogin();
 
         $scope.createRecipient = function() {
             var nrecipient = {
@@ -195,8 +245,6 @@
         }
 
         $scope.addGift = function(recipient_id) {
-            console.log('recipient_id ' + recipient_id);
-
             for (var i = 0; i < $scope.recipients.length; i++) {
                 if ($scope.recipients[i].id === recipient_id) {
                     if ($scope.recipients[i].gifts.length > 0) {
