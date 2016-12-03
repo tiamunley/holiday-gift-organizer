@@ -44,6 +44,7 @@ class Gift(models.Model):
     """
 
     STATUS = (
+        ('idea', 'idea'),
         ('bought', 'bought'),
         ('have', 'have'),
         ('shipped', 'shipped'),
