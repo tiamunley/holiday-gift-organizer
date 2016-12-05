@@ -85,9 +85,14 @@
                                        placeholder="item name" />
                             </td>
                             <td>
-                                <select class="form-control"
-                                        ng-model="gift.status"
-                                        ng-options="status for status in config.gift.children.status.choices"></select>
+                                <form name="statusform">
+                                    <select class="form-control"
+                                            name="status" id="status"
+                                            required
+                                            ng-model="gift.status"
+                                            ng-options="status for status in config.gift.children.status.choices"></select>
+                                    <span class="small btn-danger" ng-show="statusform.status.$error.required">Select status</span>
+                                </form>
                             </td>
                             <td>
                                 <div class="input-group">
