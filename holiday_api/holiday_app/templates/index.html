@@ -29,98 +29,92 @@
         <br />
 
         <!-- for each recipient -->
-        <div class="col-md-12" ng-repeat="recipient in recipients">
-            <div class="panel panel-default">
-                <div class="panel-heading">
+        <uib-accordion close-others="false">
+            <div uib-accordion-group class="panel-default" is-open="true" ng-repeat="recipient in recipients">
+                <uib-accordion-heading>
                     <h2 class="panel-title" ng-show="recipient.id !== undefined">
                         <span ng-bind="recipient.name"></span>, <span ng-bind="(perTotal(recipient.gifts, 'cost') | currency) || (0 | currency)"></span>
                     </h2>
+                </uib-accordion-heading>
 
-                    <div class="col-md-4" ng-show="recipient.id === undefined">
-                        <form ng-submit="createRecipient()" class="form-inline">
-                            <br />
-                            <div class="form-group">
+                <div class="col-md-4" ng-show="recipient.id === undefined">
+                    <form ng-submit="createRecipient()" class="form-inline">
+                        <br />
+                        <div class="form-group">
+                            <input class="form-control"
+                                   type="text"
+                                   name="newname" id="newname"
+                                   required
+                                   placeholder="Recipient's Name"
+                                   ng-maxlength="config.recipient.name.max_length"
+                                   ng-model="recipient.name" />
+                            <select class="form-control"
+                                    required
+                                    ng-model="recipient.relation"
+                                    ng-options="relation for relation in config.recipient.relation.choices"></select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button ng-show="recipient.id === undefined"
+                                ng-click="cancelRecipient()"
+                                type="button"
+                                class="btn btn-default">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+                <a href="#" ng-show="recipient.id !== undefined" ng-click="addGift(recipient.id)">Add Gift</a>
+                <table class="table table-striped" ng-show="recipient.gifts.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Item*</th>
+                            <th>Status*</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <!-- for each gift for that recipient -->
+                    <tbody ng-repeat="gift in recipient.gifts">
+                        <tr>
+                            <td>
                                 <input class="form-control"
                                        type="text"
-                                       name="newname" id="newname"
-                                       required
-                                       placeholder="Recipient's Name"
-                                       ng-maxlength="config.recipient.name.max_length"
-                                       ng-model="recipient.name" />
+                                       name="item" id="item"
+                                       ng-maxlength="config.gift.children.item.max_length"
+                                       ng-model="gift.item"
+                                       placeholder="item name" />
+                            </td>
+                            <td>
                                 <select class="form-control"
-                                        required
-                                        ng-model="recipient.relation"
-                                        ng-options="relation for relation in config.recipient.relation.choices"></select>
-                            </div>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                                <button ng-show="recipient.id === undefined"
-                                        ng-click="cancelRecipient()"
-                                        type="button"
-                                        class="btn btn-default">
-                                    Cancel
-                                </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="panel-body">
-                    <a href="#" ng-show="recipient.id !== undefined" ng-click="addGift(recipient.id)">Add Gift</a>
-                    <table class="table table-striped" ng-show="recipient.gifts.length > 0">
-                        <thead>
-                            <tr>
-                                <th>Item*</th>
-                                <th>Status*</th>
-                                <th>Cost</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <!-- for each gift for that recipient -->
-                        <tbody ng-repeat="gift in recipient.gifts">
-                            <tr>
-                                <td>
-                                    <input class="form-control"
-                                           type="text"
-                                           name="item" id="item"
-                                           ng-maxlength="config.gift.children.item.max_length"
-                                           ng-model="gift.item"
-                                           placeholder="item name" />
-                                </td>
-                                <td>
-                                    <select class="form-control"
-                                            ng-model="gift.status"
-                                            ng-options="status for status in config.gift.children.status.choices"></select>
-                                </td>
-                                <td>
-                                    <div class="input-group">
-                                        <div class="input-group-addon">$</div>
-                                        <input type="text"
-                                               class="form-control"
-                                               name="cost" id="cost"
-                                               placeholder="Amount"
-                                               ng-model="gift.cost" />
-                                        <div class="input-group-addon">.00</div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary" ng-click="saveGift(gift, recipient)">Save</button>
-                                    <button ng-show="gift.id === undefined" type="button" class="btn btn-default" ng-click="cancelGift(recipient.id)">Cancel</button>
-                                    <button ng-show="gift.id !== undefined" type="button" class="btn btn-danger" ng-click="deleteGift(gift.id, recipient)">Delete</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <textarea class="form-control" rows="2" ng-model="gift.notes" placeholder="some notes"></textarea>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                                        ng-model="gift.status"
+                                        ng-options="status for status in config.gift.children.status.choices"></select>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="input-group-addon">$</div>
+                                    <input type="text"
+                                           class="form-control"
+                                           name="cost" id="cost"
+                                           placeholder="Amount"
+                                           ng-model="gift.cost" />
+                                    <div class="input-group-addon">.00</div>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary" ng-click="saveGift(gift, recipient)">Save</button>
+                                <button ng-show="gift.id === undefined" type="button" class="btn btn-default" ng-click="cancelGift(recipient.id)">Cancel</button>
+                                <button ng-show="gift.id !== undefined" type="button" class="btn btn-danger" ng-click="deleteGift(gift.id, recipient)">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <textarea class="form-control" rows="2" ng-model="gift.notes" placeholder="some notes"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-
-
-
-        </div>
+        </uib-accordion>
 
     </div>
 
