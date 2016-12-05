@@ -21,6 +21,8 @@
         <br />
         <br />
 
+        <h3>Total overall: <span ng-bind="(total(recipients) | currency) || (0 | currency)"></span></h3>
+
         <button class="btn btn-primary" ng-click="addRecipient()">Add Recipient</button><br />
 
         <br />
@@ -30,7 +32,10 @@
         <div class="col-md-12" ng-repeat="recipient in recipients">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="panel-title" ng-show="recipient.id !== undefined" ng-bind="recipient.name"></h2>
+                    <h2 class="panel-title" ng-show="recipient.id !== undefined">
+                        <span ng-bind="recipient.name"></span>, <span ng-bind="(perTotal(recipient.gifts, 'cost') | currency) || (0 | currency)"></span>
+                    </h2>
+
                     <div class="col-md-4" ng-show="recipient.id === undefined">
                         <form ng-submit="createRecipient()" class="form-inline">
                             <br />

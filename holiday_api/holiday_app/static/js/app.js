@@ -47,7 +47,6 @@
     /* App.run, lets you initialize global stuff. */
     HolidayApp.run(function($rootScope, $http) {
         $rootScope.restUrl = '/api/v1/';
-        $rootScope.loggedin = false;
     });
 
     HolidayApp.controller('loginController', function($uibModalInstance, $scope, $http, credentials) {
@@ -184,6 +183,7 @@
                 url: '/auth/login/',
                 method: 'POST'
             }).then(function success(response) {
+                $scope.credentials.loggedIn = true;
                 initializer();
             }, function error(response) {
                 $scope.launchLoginModal();
@@ -191,6 +191,31 @@
         }
 
         checkLogin();
+
+        $scope.total = function(people) {
+            var total = 0.0;
+
+            /* it's called before recipients is defined. */
+            if (people === undefined) {
+                return 0;
+            }
+
+            for (var i = 0; i < people.length; i++) {
+                total += $scope.perTotal(people[i].gifts, 'cost');
+            }
+
+            return total;
+        }
+
+        $scope.perTotal = function(inputArray, key) {
+            var total = 0.0;
+
+            for (var i = 0; i < inputArray.length; i++) {
+                total += parseFloat(inputArray[i][key]);
+            }
+
+            return total;
+        }
 
         $scope.createRecipient = function() {
             var nrecipient = {
