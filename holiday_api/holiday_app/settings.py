@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 #SITE_ID = 1
 
 REST_KNOX = {
-    'TOKEN_TTL': 24 * 2,
+    'TOKEN_TTL': 48,
     'USER_SERIALIZER': 'holiday_app.serializers.LoginUserSerializer',
 }
 
