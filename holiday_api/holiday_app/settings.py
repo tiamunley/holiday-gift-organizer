@@ -43,8 +43,11 @@ INSTALLED_APPS = [
 
 #SITE_ID = 1
 
+import datetime
+
 REST_KNOX = {
-  'USER_SERIALIZER': 'holiday_app.serializers.LoginUserSerializer',
+    'TOKEN_TTL': datetime.timedelta(days=2),
+    'USER_SERIALIZER': 'holiday_app.serializers.LoginUserSerializer',
 }
 
 MIDDLEWARE = [
